@@ -1,0 +1,22 @@
+- hosts: nginx
+  remote_user: seregin
+  become: yes
+  tasks:
+    - name: install nginx
+      apt: name=nginx state=present
+    - name: copy config
+      ansible.builtin.template:
+        src: etc/nginx/conf.d/app.conf
+        dest: /etc/nginx/conf.d/app.conf
+    - name: copy content
+      ansible.builtin.template:
+        src: var/www/html/demo-index.html
+        dest: /var/www/html/demo-index.html
+    - name: remove default cfg
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+    - name: restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
