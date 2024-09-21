@@ -98,7 +98,7 @@ output "load_balancer_ip" {
 
 # generate inventory file for Ansible
 resource "local_file" "hosts_cfg" {
-  content = templatefile("${path.module}/hosts.tpl",
+  content = templatefile("${path.module}/../ansible/hosts.tpl",
     {
       nginxes = yandex_compute_instance.nginx[*].network_interface.0.ip_address
       zabbix = yandex_compute_instance.zabbix.network_interface.0.nat_ip_address
@@ -106,30 +106,5 @@ resource "local_file" "hosts_cfg" {
       kibana = yandex_compute_instance.kibana.network_interface.0.nat_ip_address
     }
   )
-  filename = "./hosts"
-}
-
-
-#while zabbix agent not installed we're waiting
-resource "null_resource" "provisioner_remote_exec" {
-  count = 2
-
-    connection {
-      type        = "ssh"
-      user        = local.local_admin
-      private_key = file(local.local_admin_private_key)
-      host = "${element(yandex_compute_instance.nginx[*].network_interface.0.nat_ip_address, count.index)}"
-    }
-
-  provisioner "remote-exec" {
-    inline = ["while [ -n $(dpkg -l zabbix-agent 2>/dev/null) ]; do sleep 10; done"]
-  }
-}
-
-resource "null_resource" "provisioner_local_exec" {
-#HOST_CHECKING is because no host in known_hosts, hosts if for hosts file
-  provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts -u ${local.local_admin} --private-key ../id_rsa nginx.yml"
-#    on_failure = continue
-  }
+  filename = "../ansible/hosts"
 }

@@ -1,5 +1,5 @@
-resource "yandex_compute_instance" "zabbix" {
-  name = "zabbix"
+resource "yandex_compute_instance" "kibana" {
+  name = "kibana"
   zone = "ru-central1-a"
 
   resources {
@@ -18,10 +18,9 @@ resource "yandex_compute_instance" "zabbix" {
   scheduling_policy {
     preemptible = true
   }
-
-  network_interface {
+    network_interface {
      subnet_id = yandex_vpc_subnet.web-sub-a.id
-     nat = true
+     nat = false
   }
   
   metadata = {
@@ -29,13 +28,12 @@ resource "yandex_compute_instance" "zabbix" {
   }
 }
 
-
-output "zabbix"{
-  value = yandex_compute_instance.zabbix.network_interface.0.nat_ip_address
+output "kibana"{
+  value = yandex_compute_instance.kibana.network_interface.0.ip_address
 }
 
 #while zabbix agent not installed we're waiting
-resource "null_resource" "provisioner_remote_exec_zbx" {
+resource "null_resource" "provisioner_remote_exec_kbn" {
     connection {
       type        = "ssh"
       user        = local.local_admin
@@ -47,10 +45,10 @@ resource "null_resource" "provisioner_remote_exec_zbx" {
   }
 }
 
-resource "null_resource" "provisioner_local_exec_zbx" {
+resource "null_resource" "provisioner_local_exec_kbn" {
 #HOST_CHECKING is because no host in known_hosts, hosts if for hosts file
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ../ansible/hosts -u ${local.local_admin} --private-key ../id_rsa ../ansible/zabbix.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ../ansible/hosts -u ${local.local_admin} --private-key ../id_rsa ../ansible/kibana.yml"
     on_failure = continue
   }
 }

@@ -26,7 +26,7 @@ resource "yandex_compute_instance" "nginx" {
   }
   
   metadata = {
-    user-data = "${file("cloud_conf.yaml")}"
+    user-data = "${file("cloud_conf_int.yaml")}"
   }
 }
 
@@ -35,3 +35,4 @@ output "nginx_ips" {
     for name, nginx in yandex_compute_instance.nginx : name => nginx.network_interface.0.ip_address
   })
 }
+

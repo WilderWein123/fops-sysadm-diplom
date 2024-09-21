@@ -12,3 +12,4 @@ package_upgrade: true
 
 packages:
   - zabbix-agent
+  - ansible

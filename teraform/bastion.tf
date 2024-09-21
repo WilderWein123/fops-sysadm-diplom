@@ -1,5 +1,5 @@
-resource "yandex_compute_instance" "zabbix" {
-  name = "zabbix"
+resource "yandex_compute_instance" "bastion" {
+  name = "bastion"
   zone = "ru-central1-a"
 
   resources {
@@ -35,7 +35,7 @@ output "zabbix"{
 }
 
 #while zabbix agent not installed we're waiting
-resource "null_resource" "provisioner_remote_exec_zbx" {
+resource "null_resource" "provisioner_remote_exec_bst" {
     connection {
       type        = "ssh"
       user        = local.local_admin
@@ -45,12 +45,8 @@ resource "null_resource" "provisioner_remote_exec_zbx" {
   provisioner "remote-exec" {
     inline = ["while [ -n $(dpkg -l zabbix-agent 2>/dev/null) ]; do sleep 10; done"]
   }
-}
-
-resource "null_resource" "provisioner_local_exec_zbx" {
-#HOST_CHECKING is because no host in known_hosts, hosts if for hosts file
-  provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ../ansible/hosts -u ${local.local_admin} --private-key ../id_rsa ../ansible/zabbix.yml"
-    on_failure = continue
+  provisioner "file" {
+    source = "../ansible"
+    destination = "/tmp/"
   }
 }
