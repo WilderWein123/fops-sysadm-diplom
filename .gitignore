@@ -1,0 +1,12 @@
+id_rsa.*
+id_rsa
+terraform.tfstate
+teraform/.terraform
+teraform/terraform.*
+.vscode/*
+teraform/variables.tf
+teraform/terraform.tfstate
+teraform/terraform.tfstate.backup
+teraform/hosts
+teraform/.terraform.tfstate.lock.info
+teraform/.lock*
