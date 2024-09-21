@@ -20,8 +20,8 @@ resource "yandex_compute_instance" "elastic" {
   }
 
   network_interface {
-     subnet_id = yandex_vpc_subnet.web-sub-a.id
-     nat = true
+     subnet_id = yandex_vpc_subnet.local-sub-c.id
+     index = 9
   }
   
   metadata = {
@@ -29,7 +29,7 @@ resource "yandex_compute_instance" "elastic" {
   }
 }
 
-output "elastic"{
-  value = yandex_compute_instance.elastic.network_interface.0.nat_ip_address
+output "elastic_int"{
+  value = yandex_compute_instance.elastic.network_interface.9.ip_address
 }
 

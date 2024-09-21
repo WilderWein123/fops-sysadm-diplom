@@ -2,6 +2,18 @@ resource "yandex_vpc_network" "web-network" {
   name = "web-network"
 }
 
+resource "yandex_vpc_network" "local-network" {
+  name = "local-network"
+}
+
+resource "yandex_vpc_subnet" "local-sub-c" {
+  name           = "local-sub-c"
+  zone           = "ru-central1-c"
+  network_id     = yandex_vpc_network.local-network.id
+  v4_cidr_blocks = ["192.168.252.0/24"]
+}
+
+
 resource "yandex_vpc_subnet" "web-sub-a" {
   name           = "web-sub-a"
   zone           = "ru-central1-a"
@@ -104,6 +116,7 @@ resource "local_file" "hosts_cfg" {
       zabbix = yandex_compute_instance.zabbix.network_interface.0.nat_ip_address
       elastic = yandex_compute_instance.elastic.network_interface.0.ip_address
       kibana = yandex_compute_instance.kibana.network_interface.0.nat_ip_address
+      bastion = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
     }
   )
   filename = "../ansible/hosts"

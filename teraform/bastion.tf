@@ -23,6 +23,12 @@ resource "yandex_compute_instance" "bastion" {
      subnet_id = yandex_vpc_subnet.web-sub-a.id
      nat = true
   }
+
+    network_interface {
+     subnet_id = yandex_vpc_subnet.local-sub-c.id
+     nat = false
+     index = 9
+  }
   
   metadata = {
     user-data = "${file("cloud_conf.yaml")}"
@@ -30,23 +36,11 @@ resource "yandex_compute_instance" "bastion" {
 }
 
 
-output "bastion"{
-  value = yandex_compute_instance.zabbix.network_interface.0.nat_ip_address
+output "bastion_ext"{
+  value = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
 }
 
-#while zabbix agent not installed we're waiting
-resource "null_resource" "provisioner_remote_exec_bst" {
-    connection {
-      type        = "ssh"
-      user        = local.local_admin
-      private_key = file(local.local_admin_private_key)
-      host = "yandex_compute_instance.zabbix.network_interface.0.nat_ip_address"
-    }
-  provisioner "remote-exec" {
-    inline = ["while [ -n $(dpkg -l zabbix-agent 2>/dev/null) ]; do sleep 10; done"]
-  }
-  provisioner "file" {
-    source = "../ansible"
-    destination = "/tmp/"
-  }
+output "bastion_int"{
+  value = yandex_compute_instance.bastion.network_interface.9.nat_ip_address
 }
+

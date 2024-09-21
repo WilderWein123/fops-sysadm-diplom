@@ -22,7 +22,13 @@ resource "yandex_compute_instance" "nginx" {
 
   network_interface {
      subnet_id = count.index == 0? yandex_vpc_subnet.web-sub-a.id : yandex_vpc_subnet.web-sub-b.id
+     index = 0
      nat = false
+  }
+
+    network_interface {
+    subnet_id = yandex_vpc_subnet.local-sub-c.id
+    index = 9
   }
   
   metadata = {
@@ -30,9 +36,15 @@ resource "yandex_compute_instance" "nginx" {
   }
 }
 
-output "nginx_ips" {
+output "nginx_web_int" {
   value = tomap ({
     for name, nginx in yandex_compute_instance.nginx : name => nginx.network_interface.0.ip_address
+  })
+}
+
+output "nginx_local_int" {
+  value = tomap ({
+    for name, nginx in yandex_compute_instance.nginx : name => nginx.network_interface.9.ip_address
   })
 }
 
