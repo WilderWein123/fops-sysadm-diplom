@@ -26,7 +26,7 @@ resource "yandex_compute_instance" "nginx" {
   }
 
   metadata = {
-    user-data = "${file("cloud_conf_int.yaml")}"
+    user-data = "${file("cloud_conf.yaml")}"
   }
 }
 

@@ -10,3 +10,4 @@ teraform/terraform.tfstate.backup
 teraform/hosts
 teraform/.terraform.tfstate.lock.info
 teraform/.lock*
+ansible/id_rsa

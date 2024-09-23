@@ -2,14 +2,6 @@ resource "yandex_vpc_network" "web-network" {
   name = "web-network"
 }
 
-resource "yandex_vpc_network" "local-network" {
-  name = "local-network"
-}
-
-resource "yandex_vpc_network" "net-network" {
-  name = "net-network"
-}
-
 resource "yandex_vpc_subnet" "web-sub-a" {
   name           = "web-sub-a"
   zone           = "ru-central1-a"
@@ -22,13 +14,6 @@ resource "yandex_vpc_subnet" "web-sub-b" {
   zone           = "ru-central1-b"
   network_id     = yandex_vpc_network.web-network.id
   v4_cidr_blocks = ["192.168.254.0/24"]
-}
-
-resource "yandex_vpc_subnet" "net-sub-a" {
-  name           = "net-sub-a"
-  zone           = "ru-central1-a"
-  network_id     = yandex_vpc_network.net-network.id
-  v4_cidr_blocks = ["192.168.255.0/24"]
 }
 
 resource "yandex_alb_target_group" "nginx-targetgroup" {

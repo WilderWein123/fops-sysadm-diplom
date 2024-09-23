@@ -20,7 +20,7 @@ resource "yandex_compute_instance" "kibana" {
   }
 
     network_interface {
-     subnet_id = yandex_vpc_subnet.net-sub-a.id
+     subnet_id = yandex_vpc_subnet.web-sub-a.id
      nat = true
      index = 0
   }

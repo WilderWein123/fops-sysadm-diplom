@@ -20,11 +20,11 @@ resource "yandex_compute_instance" "elastic" {
   }
 
   network_interface {
-     subnet_id = yandex_vpc_subnet.net-sub-a.id
+     subnet_id = yandex_vpc_subnet.web-sub-a.id
   }
   
   metadata = {
-    user-data = "${file("cloud_conf_int.yaml")}"
+    user-data = "${file("cloud_conf.yaml")}"
   }
 }
 
