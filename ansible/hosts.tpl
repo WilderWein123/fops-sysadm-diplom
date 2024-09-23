@@ -11,6 +11,3 @@ ${kibana}
 
 [elastic]
 ${elastic}
-
-[bastion]
-${bastion}

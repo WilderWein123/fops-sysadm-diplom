@@ -33,3 +33,7 @@ resource "yandex_compute_instance" "kibana" {
 output "kibana_ext"{
   value = yandex_compute_instance.kibana.network_interface.0.nat_ip_address
 }
+
+output "kibana_int"{
+  value = yandex_compute_instance.kibana.network_interface.0.ip_address
+}

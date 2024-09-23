@@ -101,10 +101,9 @@ resource "local_file" "hosts_cfg" {
   content = templatefile("${path.module}/../ansible/hosts.tpl",
     {
       nginxes = yandex_compute_instance.nginx[*].network_interface.0.ip_address
-      zabbix = yandex_compute_instance.zabbix.network_interface.0.nat_ip_address
+      zabbix = yandex_compute_instance.zabbix.network_interface.0.ip_address
       elastic = yandex_compute_instance.elastic.network_interface.0.ip_address
-      kibana = yandex_compute_instance.kibana.network_interface.0.nat_ip_address
-      bastion = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
+      kibana = yandex_compute_instance.kibana.network_interface.0.ip_address
     }
   )
   filename = "../ansible/hosts"
