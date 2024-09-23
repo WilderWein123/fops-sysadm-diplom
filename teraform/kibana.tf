@@ -20,14 +20,9 @@ resource "yandex_compute_instance" "kibana" {
   }
 
     network_interface {
-     subnet_id = yandex_vpc_subnet.web-sub-a.id
+     subnet_id = yandex_vpc_subnet.net-sub-a.id
      nat = true
      index = 0
-  }
-  
-    network_interface {
-     subnet_id = yandex_vpc_subnet.local-sub-c.id
-     index = 9
   }
   
   metadata = {
@@ -37,8 +32,4 @@ resource "yandex_compute_instance" "kibana" {
 
 output "kibana_ext"{
   value = yandex_compute_instance.kibana.network_interface.0.nat_ip_address
-}
-
-output "kibana_int"{
-  value = yandex_compute_instance.kibana.network_interface.9.nat_ip_address
 }

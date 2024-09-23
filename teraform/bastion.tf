@@ -19,15 +19,9 @@ resource "yandex_compute_instance" "bastion" {
     preemptible = true
   }
 
-  network_interface {
-     subnet_id = yandex_vpc_subnet.web-sub-a.id
-     nat = true
-  }
-
     network_interface {
-     subnet_id = yandex_vpc_subnet.local-sub-c.id
+     subnet_id = yandex_vpc_subnet.net-sub-a.id
      nat = false
-     index = 9
   }
   
   metadata = {
@@ -39,8 +33,3 @@ resource "yandex_compute_instance" "bastion" {
 output "bastion_ext"{
   value = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
 }
-
-output "bastion_int"{
-  value = yandex_compute_instance.bastion.network_interface.9.nat_ip_address
-}
-

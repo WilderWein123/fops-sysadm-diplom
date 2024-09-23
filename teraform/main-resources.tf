@@ -6,13 +6,9 @@ resource "yandex_vpc_network" "local-network" {
   name = "local-network"
 }
 
-resource "yandex_vpc_subnet" "local-sub-c" {
-  name           = "local-sub-c"
-  zone           = "ru-central1-c"
-  network_id     = yandex_vpc_network.local-network.id
-  v4_cidr_blocks = ["192.168.252.0/24"]
+resource "yandex_vpc_network" "net-network" {
+  name = "net-network"
 }
-
 
 resource "yandex_vpc_subnet" "web-sub-a" {
   name           = "web-sub-a"
@@ -26,6 +22,13 @@ resource "yandex_vpc_subnet" "web-sub-b" {
   zone           = "ru-central1-b"
   network_id     = yandex_vpc_network.web-network.id
   v4_cidr_blocks = ["192.168.254.0/24"]
+}
+
+resource "yandex_vpc_subnet" "net-sub-a" {
+  name           = "net-sub-a"
+  zone           = "ru-central1-a"
+  network_id     = yandex_vpc_network.net-network.id
+  v4_cidr_blocks = ["192.168.255.0/24"]
 }
 
 resource "yandex_alb_target_group" "nginx-targetgroup" {
@@ -78,7 +81,7 @@ resource "yandex_alb_backend_group" "backend-group-nginx" {
   target_group_ids = [yandex_alb_target_group.nginx-targetgroup.id]
     healthcheck {
       timeout = "10s"
-      interval = "2s"
+      interval = "10s"
       http_healthcheck {
         path = "/"
       }
