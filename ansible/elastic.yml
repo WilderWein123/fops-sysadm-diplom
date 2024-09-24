@@ -1,0 +1,12 @@
+- hosts: elastic
+  remote_user: seregin
+  become: yes
+  tasks:
+  - name: uploading elasticsearch
+    copy:
+      src: /data/distribs/Linux/elasticsearch/elasticsearch-8.2.2-amd64.deb 
+      dest: /tmp
+  - name: installing elasticsearch
+    apt:
+      deb: /tmp/elasticsearch-8.2.2-amd64.deb 
+      state: present

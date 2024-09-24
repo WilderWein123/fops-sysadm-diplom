@@ -25,7 +25,7 @@ resource "yandex_compute_instance" "bastion" {
   }
   
   metadata = {
-    user-data = "${file("cloud_conf_mgmt.yaml")}"
+    user-data = "${file("cloud_conf.yaml")}"
   }
 }
 
@@ -35,8 +35,7 @@ output "bastion_ext"{
 }
 
 #while zabbix agent not installed we're waiting
-resource "null_resource" "provisioner_remote_exec" {
-  count = 2
+resource "null_resource" "waiting_vm_started" {
     connection {
       type        = "ssh"
       user        = local.local_admin
@@ -44,8 +43,17 @@ resource "null_resource" "provisioner_remote_exec" {
       host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
     }
   provisioner "remote-exec" {
-    inline = ["while [ -n $(dpkg -l zabbix-agent 2>/dev/null) ]; do sleep 10; done"]
+    inline = ["while [ -n $(dpkg -l apt 2>/dev/null) ]; do sleep 10; done"]
   }
+}
+
+resource "null_resource" "provisioning_files" {
+    connection {
+      type        = "ssh"
+      user        = local.local_admin
+      private_key = file(local.local_admin_private_key)
+      host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
+    }
   provisioner "file"{
     source = "../ansible"
     destination = "/tmp"
@@ -54,13 +62,38 @@ resource "null_resource" "provisioner_remote_exec" {
     source = "../id_rsa"
     destination =  "/tmp/id_rsa"
   }
+}
+
+resource "null_resource" "installing_ansible" {
+    connection {
+      type        = "ssh"
+      user        = local.local_admin
+      private_key = file(local.local_admin_private_key)
+      host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
+    }
   provisioner "remote-exec" {
     inline = [
-      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/nginx.yml",
-      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/elastic.yml",
-      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/kibana.yml",
-      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/zabbix.yml",
-      "rm -rf /tmp/ansible"
+      "sudo apt install ansible -y",
+      "sudo chmod 600 /tmp/ansible/id_rsa"
+    ]
+  }
+}
+
+resource "null_resource" "starting_playbooks" {
+    connection {
+      type        = "ssh"
+      user        = local.local_admin
+      private_key = file(local.local_admin_private_key)
+      host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
+    }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/nginx.yml",
+      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/elastic.yml",
+      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/kibana.yml",
+      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/zabbix.yml"
+#      ,
+#      "rm -rf /tmp/ansible"
     ]
   }
 }

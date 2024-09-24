@@ -13,7 +13,7 @@
       apt update
   - name: install packages
     command:
-      apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent mysql-server
+      apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent mysql-server -y
   - name: create db 1
     command:
       mysql -uroot -e "create user zabbix@localhost identified by 'MegaSecuredPWD123';"

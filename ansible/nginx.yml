@@ -20,3 +20,30 @@
       ansible.builtin.service:
         name: nginx
         state: restarted
+    - name: uploading filebeat
+      copy:
+        src: /data/distribs/Linux/elasticsearch/filebeat-8.2.2-amd64.deb 
+        dest: /tmp
+    - name: installing filebeat
+      apt:
+        deb: /tmp/filebeat-8.2.2-amd64.deb
+        state: present
+    - name: disable default conf and writing new
+      copy:
+        dest: /etc/filebeat/modules.d/nginx.yml.old
+        content: |
+          - module: nginx
+            access:
+              enabled: true
+        mode: 777
+    - name: installing nginx module
+      shell:
+        cmd:  filebeat setup --dashboards && filebeat modules enable system nginx
+    - name: refreshing daemon info
+      shell:
+        cmd: systemctl daemon-reload
+    - name: restart and enbale filebeat daemon
+      systemd:
+        name: filebeat.service
+        state: restarted
+        enabled: true
