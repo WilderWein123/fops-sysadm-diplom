@@ -1,6 +1,6 @@
-resource "yandex_vpc_security_group" "secgroup_zabbix" {
+resource "yandex_vpc_security_group" "inc_web" {
     network_id = yandex_vpc_network.web-network.id
-    name = "secgroup_zabbix"
+    name = "inc_web"
 
     ingress {
         protocol = "TCP"
@@ -24,9 +24,9 @@ resource "yandex_vpc_security_group" "secgroup_zabbix" {
     }
 }
 
-resource "yandex_vpc_security_group" "secgroup_kibana" {
+resource "yandex_vpc_security_group" "inc_kibana" {
     network_id = yandex_vpc_network.web-network.id
-    name = "secgroup_kibana"
+    name = "inc_kibana"
 
     ingress {
         protocol = "TCP"
@@ -50,8 +50,34 @@ resource "yandex_vpc_security_group" "secgroup_kibana" {
     }
 }
 
-resource "yandex_vpc_security_group" "secgroup-mgmt" {
-    name = "secgroup-mgmt"
+resource "yandex_vpc_security_group" "inc_elk" {
+    network_id = yandex_vpc_network.web-network.id
+    name = "inc_elk"
+
+    ingress {
+        protocol = "TCP"
+        port = "9200"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+        protocol = "ANY"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+    }
+
+        ingress {
+        protocol = "ICMP"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+        protocol = "ICMP"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+    }
+}
+
+resource "yandex_vpc_security_group" "inc_ssh" {
+    name = "inc_ssh"
     network_id = yandex_vpc_network.web-network.id
     ingress {
         protocol = "TCP"
@@ -73,4 +99,16 @@ resource "yandex_vpc_security_group" "secgroup-mgmt" {
         protocol = "ICMP"
         v4_cidr_blocks = ["0.0.0.0/0"]
     }
+}
+
+resource "yandex_vpc_security_group" "secgroup_inet" {
+  name        = "secgroup_inet"
+  network_id  = yandex_vpc_network.web-network.id
+
+  ingress {
+    protocol       = "ANY"    
+    v4_cidr_blocks = ["0.0.0.0/0"] 
+    from_port      = 0
+    to_port        = 65535 
+  }
 }

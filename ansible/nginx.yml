@@ -2,8 +2,9 @@
   remote_user: seregin
   become: yes
   tasks:
-    - name: install nginx
-      apt: name=nginx state=present
+    - name: waiting for nginx install by cloudinit
+      shell:
+        cmd: while [ -n $(dpkg -l nginx 2>/dev/null) ]; do sleep 10; done
     - name: copy config
       ansible.builtin.template:
         src: etc/nginx/conf.d/app.conf

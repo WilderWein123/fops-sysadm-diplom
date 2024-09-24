@@ -22,6 +22,7 @@ resource "yandex_compute_instance" "bastion" {
     network_interface {
      subnet_id = yandex_vpc_subnet.web-sub-a.id
      nat = true
+     security_group_ids =  [ yandex_vpc_security_group.inc_ssh.id ]
   }
   
   metadata = {
@@ -88,10 +89,10 @@ resource "null_resource" "starting_playbooks" {
     }
   provisioner "remote-exec" {
     inline = [
-      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/nginx.yml",
-      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/elastic.yml",
-      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/kibana.yml",
-      "sudo ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/zabbix.yml"
+      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/nginx.yml",
+      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/elastic.yml",
+      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/kibana.yml",
+      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/zabbix.yml"
 #      ,
 #      "rm -rf /tmp/ansible"
     ]
