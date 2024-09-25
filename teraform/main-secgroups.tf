@@ -31,16 +31,6 @@ resource "yandex_vpc_security_group" "inc_elk" {
     }
 }
 
-resource "yandex_vpc_security_group" "inc_ssh" {
-    name = "inc_ssh"
-    network_id = yandex_vpc_network.web-network.id
-    ingress {
-        protocol = "TCP"
-        port = "22"
-        v4_cidr_blocks = ["192.168.0.0/16"]
-    }
-}
-
 resource "yandex_vpc_security_group" "inc_ssh_global" {
     name = "inc_ssh_global"
     network_id = yandex_vpc_network.web-network.id
@@ -57,6 +47,8 @@ resource "yandex_vpc_security_group" "out_all" {
     egress {
         protocol = "ANY"
         v4_cidr_blocks = ["0.0.0.0/0"]
+        from_port = 0
+        to_port = 65535
     }
 }
 
@@ -66,9 +58,13 @@ resource "yandex_vpc_security_group" "local_all" {
     ingress {
         protocol = "ANY"
         v4_cidr_blocks = ["192.168.0.0/16"]
+        from_port = 0
+        to_port = 65535
     }
     egress {
         protocol = "ANY"
         v4_cidr_blocks = ["192.168.0.0/16"]
+        from_port = 0
+        to_port = 65535
     }
 }
