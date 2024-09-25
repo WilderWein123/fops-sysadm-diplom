@@ -52,6 +52,15 @@ resource "yandex_vpc_security_group" "out_all" {
     }
 }
 
+resource "yandex_vpc_security_group" "in_all" {
+    name = "in_all"
+    network_id = yandex_vpc_network.web-network.id
+    ingress {
+        protocol = "ANY"
+        v4_cidr_blocks = ["10.0.0.0/8"]
+    }
+}
+
 resource "yandex_vpc_security_group" "local_all" {
     name = "local_all"
     network_id = yandex_vpc_network.web-network.id
