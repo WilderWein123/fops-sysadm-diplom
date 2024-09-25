@@ -21,7 +21,7 @@ resource "yandex_compute_instance" "elastic" {
 
   network_interface {
      subnet_id = yandex_vpc_subnet.web-sub-a.id
-     security_group_ids = [ yandex_vpc_security_group.inc_ssh.id, yandex_vpc_security_group.inc_elk.id ]
+     security_group_ids = [ yandex_vpc_security_group.out_all.id, yandex_vpc_security_group.inc_ssh.id, yandex_vpc_security_group.inc_elk.id ]
   }
   
   metadata = {

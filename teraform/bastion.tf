@@ -22,7 +22,7 @@ resource "yandex_compute_instance" "bastion" {
     network_interface {
      subnet_id = yandex_vpc_subnet.web-sub-a.id
      nat = true
-     security_group_ids =  [ yandex_vpc_security_group.inc_ssh.id ]
+     security_group_ids =  [ yandex_vpc_security_group.out_all.id, yandex_vpc_security_group.inc_ssh_global.id ]
   }
   
   metadata = {
@@ -44,7 +44,7 @@ resource "null_resource" "waiting_vm_started" {
       host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
     }
   provisioner "remote-exec" {
-    inline = ["while [ -n $(dpkg -l apt 2>/dev/null) ]; do sleep 10; done"]
+    inline = ["while [ -n $(dpkg -l apt 2>/dev/null) ]; do echo 'waiting for VM started' && sleep 10; done"]
   }
 }
 
@@ -87,6 +87,9 @@ resource "null_resource" "starting_playbooks" {
       private_key = file(local.local_admin_private_key)
       host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
     }
+  provisioner "remote-exec" {
+    inline = ["while [ -n $(dpkg -l ansible 2>/dev/null) ]; do echo 'waiting for ansible installed' && sleep 10; done"]
+  }
   provisioner "remote-exec" {
     inline = [
       "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/nginx.yml",
