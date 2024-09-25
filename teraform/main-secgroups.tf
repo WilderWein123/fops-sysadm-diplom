@@ -59,3 +59,16 @@ resource "yandex_vpc_security_group" "out_all" {
         v4_cidr_blocks = ["0.0.0.0/0"]
     }
 }
+
+resource "yandex_vpc_security_group" "local_all" {
+    name = "local_all"
+    network_id = yandex_vpc_network.web-network.id
+    ingress {
+        protocol = "ANY"
+        v4_cidr_blocks = ["192.168.0.0/16"]
+    }
+    egress {
+        protocol = "ANY"
+        v4_cidr_blocks = ["192.168.0.0/16"]
+    }
+}

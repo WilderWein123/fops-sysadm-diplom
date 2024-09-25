@@ -23,7 +23,7 @@
         state: restarted
     - name: uploading filebeat
       copy:
-        src: /data/distribs/Linux/elasticsearch/filebeat-8.2.2-amd64.deb 
+        src: /tmp/ansible/elasticsearch/filebeat-8.2.2-amd64.deb 
         dest: /tmp
     - name: installing filebeat
       apt:

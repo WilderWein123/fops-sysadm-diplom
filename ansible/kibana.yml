@@ -4,7 +4,7 @@
   tasks:
   - name: uploading kibana
     copy:
-      src: /data/distribs/Linux/elasticsearch/kibana-8.2.2-amd64.deb 
+      src: /tmp/ansible/elasticsearch/kibana-8.2.2-amd64.deb 
       dest: /tmp
   - name: installing elasticsearch
     apt:

@@ -4,7 +4,7 @@
   tasks:
   - name: uploading elasticsearch
     copy:
-      src: /data/distribs/Linux/elasticsearch/elasticsearch-8.2.2-amd64.deb 
+      src: /tmp/ansible/elasticsearch/elasticsearch-8.2.2-amd64.deb
       dest: /tmp
   - name: installing elasticsearch
     apt:

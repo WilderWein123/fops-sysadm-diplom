@@ -23,7 +23,7 @@ resource "yandex_compute_instance" "nginx" {
   network_interface {
      subnet_id = count.index == 0? yandex_vpc_subnet.web-sub-a.id : yandex_vpc_subnet.web-sub-b.id
      nat = false
-     security_group_ids = [ yandex_vpc_security_group.out_all.id, yandex_vpc_security_group.inc_ssh.id, yandex_vpc_security_group.inc_web.id ]
+     security_group_ids = [ yandex_vpc_security_group.out_all.id, yandex_vpc_security_group.inc_ssh.id, yandex_vpc_security_group.inc_web.id, yandex_vpc_security_group.local_all.id ]
   }
 
   metadata = {
