@@ -74,9 +74,9 @@ resource "null_resource" "installing_ansible" {
     }
   provisioner "remote-exec" {
     inline = [
-      "apt update"
-      "apt upgrade -y"
-      "apt autoremove"
+      "apt update",
+      "apt upgrade -y",
+      "apt autoremove",
       "sudo chmod 600 /tmp/ansible/id_rsa"
     ]
   }
