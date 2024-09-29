@@ -26,7 +26,7 @@ resource "yandex_compute_instance" "bastion" {
   }
   
   metadata = {
-    user-data = "${file("cloud_conf.yaml")}"
+    user-data = "${file("cloud_conf_bastion.yaml")}"
   }
 }
 
@@ -59,10 +59,10 @@ resource "null_resource" "provisioning_files" {
     source = "../ansible"
     destination = "/tmp"
   }
-  provisioner "file" {
-    source = "../id_rsa"
-    destination =  "/tmp/id_rsa"
-  }
+#  provisioner "file" {
+#    source = "/data/distribs/Linux/elasticsearch/"
+#    destination =  "/tmp/"
+#  }
 }
 
 resource "null_resource" "installing_ansible" {
@@ -74,8 +74,9 @@ resource "null_resource" "installing_ansible" {
     }
   provisioner "remote-exec" {
     inline = [
-      "sudo apt update",
-      "sudo apt install ansible -y",
+      "apt update"
+      "apt upgrade -y"
+      "apt autoremove"
       "sudo chmod 600 /tmp/ansible/id_rsa"
     ]
   }
