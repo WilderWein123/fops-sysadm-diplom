@@ -7,6 +7,7 @@ resource "yandex_vpc_subnet" "web-sub-a" {
   zone           = "ru-central1-a"
   network_id     = yandex_vpc_network.web-network.id
   v4_cidr_blocks = ["192.168.253.0/24"]
+  route_table_id = yandex_vpc_route_table.route_table.id
 }
 
 resource "yandex_vpc_subnet" "web-sub-b" {
@@ -14,6 +15,21 @@ resource "yandex_vpc_subnet" "web-sub-b" {
   zone           = "ru-central1-b"
   network_id     = yandex_vpc_network.web-network.id
   v4_cidr_blocks = ["192.168.254.0/24"]
+  route_table_id = yandex_vpc_route_table.route_table.id
+}
+resource "yandex_vpc_gateway" "natgateway" {
+  name = "natgateway"
+  shared_egress_gateway {}
+}
+
+resource "yandex_vpc_route_table" "route_table" {
+  name       = "route_table"
+  network_id = yandex_vpc_network.web-network.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    gateway_id         = yandex_vpc_gateway.natgateway.id
+  }
 }
 
 resource "yandex_alb_target_group" "nginx-targetgroup" {
