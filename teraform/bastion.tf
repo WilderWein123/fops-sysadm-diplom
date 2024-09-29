@@ -74,6 +74,7 @@ resource "null_resource" "installing_ansible" {
     }
   provisioner "remote-exec" {
     inline = [
+      "sudo apt update",
       "sudo apt install ansible -y",
       "sudo chmod 600 /tmp/ansible/id_rsa"
     ]
