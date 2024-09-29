@@ -59,10 +59,6 @@ resource "null_resource" "provisioning_files" {
     source = "../ansible"
     destination = "/tmp"
   }
-#  provisioner "file" {
-#    source = "/data/distribs/Linux/elasticsearch/"
-#    destination =  "/tmp/"
-#  }
 }
 
 resource "null_resource" "installing_ansible" {
@@ -90,7 +86,7 @@ resource "null_resource" "starting_playbooks" {
       host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
     }
   provisioner "remote-exec" {
-    inline = ["while [ -n $(dpkg -l ansible 2>/dev/null) ]; do echo 'waiting for ansible installed' && sleep 10; done"]
+    inline = ["while [ -n $(dpkg -l ansible 2>/dev/null) ]; do echo 'waiting for ansible installed' && sleep 60; done"]
   }
   provisioner "remote-exec" {
     inline = [
