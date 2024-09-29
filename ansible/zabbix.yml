@@ -2,40 +2,43 @@
   remote_user: seregin
   become: yes
   tasks:
-  - name: wget zbx repo
+  - name: zabbix remove unattended-upgrades
+    command:
+      apt purge unattended-upgrades -y
+  - name: zabbix wget zbx repo
     command:
       wget https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2+ubuntu22.04_all.deb
-  - name: install zbx repo
+  - name: zabbix install zbx repo
     command:
       dpkg -i zabbix-release_7.0-2+ubuntu22.04_all.deb
-  - name: update apt cache
+  - name: zabbix update apt cache
     command:
       apt update
-  - name: install packages
+  - name: zabbix install packages
     command:
       apt install zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent mysql-server -y
-  - name: create db 1
+  - name: zabbix create db 1
     command:
       mysql -uroot -e "create user zabbix@localhost identified by 'MegaSecuredPWD123';"
-  - name: create db 2
+  - name: zabbix create db 2
     command:
       mysql -uroot -e "create database zabbix character set utf8 collate utf8_bin;" 
-  - name: create db 3
+  - name: zabbix create db 3
     command:
       mysql -uroot -e "grant all privileges on zabbix.* to zabbix@localhost;"
-  - name: create db 4
+  - name: zabbix create db 4
     command:
       mysql -uroot -e "FLUSH PRIVILEGES;"
-  - name: create db 5
+  - name: zabbix create db 5
     command:
-      zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | sudo mysql -u root zabbix
+      zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | sudo mysql -uroot zabbix
   - name: edit zbx server config
     command:
       echo DBPassword=MegaSecuredPWD123 >> /etc/zabbix/zabbix_server.conf
-  - name: apply config changes
+  - name: zabbix apply config changes
     command:
       /etc/init.d/zabbix-server restart
-  - name: restart apache
+  - name: zabbix restart apache
     command:
       /etc/init.d/apache2 restart
       

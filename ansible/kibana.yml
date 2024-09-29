@@ -2,11 +2,14 @@
   remote_user: seregin
   become: yes
   tasks:
-  - name: uploading kibana
+  - name: kibana remove unattended-upgrades
+    command:
+      apt purge unattended-upgrades -y
+  - name: kibana uploading kibana
     copy:
-      src: /tmp/ansible/elasticsearch/kibana-8.2.2-amd64.deb 
+      src: /tmp/kibana-8.2.2-amd64.deb 
       dest: /tmp
-  - name: installing elasticsearch
+  - name: kibana installing elasticsearch
     apt:
       deb: /tmp/kibana-8.2.2-amd64.deb 
       state: present

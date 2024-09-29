@@ -5,7 +5,7 @@ resource "yandex_compute_instance" "bastion" {
   resources {
     cores  = 2
     memory = 1
-    core_fraction = 5
+    core_fraction = 20
   }
 
   boot_disk {
@@ -48,6 +48,18 @@ resource "null_resource" "waiting_vm_started" {
   }
 }
 
+resource "null_resource" "installing_ansible" {
+    connection {
+      type        = "ssh"
+      user        = local.local_admin
+      private_key = file(local.local_admin_private_key)
+      host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
+    }
+  provisioner "remote-exec" {
+    inline = ["while [ -n $(dpkg -l ansible 2>/dev/null) ]; do echo 'waiting for ansible installed' && sleep 10; done"]
+  }
+}
+
 resource "null_resource" "provisioning_files" {
     connection {
       type        = "ssh"
@@ -59,22 +71,9 @@ resource "null_resource" "provisioning_files" {
     source = "../ansible"
     destination = "/tmp"
   }
-}
-
-resource "null_resource" "installing_ansible" {
-    connection {
-      type        = "ssh"
-      user        = local.local_admin
-      private_key = file(local.local_admin_private_key)
-      host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
-    }
-  provisioner "remote-exec" {
-    inline = [
-      "apt update",
-      "apt upgrade -y",
-      "apt autoremove",
-      "sudo chmod 600 /tmp/ansible/id_rsa"
-    ]
+  provisioner "file"{
+    source = "/data/distribs/Linux/elasticsearch/"
+    destination = "/tmp"
   }
 }
 
@@ -85,9 +84,6 @@ resource "null_resource" "starting_playbooks" {
       private_key = file(local.local_admin_private_key)
       host = yandex_compute_instance.bastion.network_interface.0.nat_ip_address
     }
-  provisioner "remote-exec" {
-    inline = ["while [ -n $(dpkg -l ansible 2>/dev/null) ]; do echo 'waiting for ansible installed' && sleep 60; done"]
-  }
   provisioner "remote-exec" {
     inline = [
       "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /tmp/ansible/hosts -u ${local.local_admin} --private-key /tmp/ansible/id_rsa /tmp/ansible/nginx.yml",
