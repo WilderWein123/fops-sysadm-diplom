@@ -1,6 +1,6 @@
-resource "yandex_vpc_security_group" "inc_web" {
+resource "yandex_vpc_security_group" "inc_http" {
     network_id = yandex_vpc_network.web-network.id
-    name = "inc_web"
+    name = "inc_http"
 
     ingress {
         protocol = "TCP"
@@ -27,7 +27,7 @@ resource "yandex_vpc_security_group" "inc_elk" {
     ingress {
         protocol = "TCP"
         port = "9200"
-        v4_cidr_blocks = ["0.0.0.0/0"]
+        v4_cidr_blocks = ["192.168.0.0/16"]
     }
 }
 
@@ -41,39 +41,31 @@ resource "yandex_vpc_security_group" "inc_ssh_global" {
     }
 }
 
+resource "yandex_vpc_security_group" "inc_ssh" {
+    name = "inc_ssh"
+    network_id = yandex_vpc_network.web-network.id
+    ingress {
+        protocol = "TCP"
+        port = "22"
+        v4_cidr_blocks = ["192.168.0.0/16"]
+    }
+}
+
+resource "yandex_vpc_security_group" "inc_zbxagent" {
+    name = "inc_zbxagent"
+    network_id = yandex_vpc_network.web-network.id
+    ingress {
+        protocol = "TCP"
+        port = "10050"
+        v4_cidr_blocks = ["192.168.0.0/16"]
+    }
+}
+
 resource "yandex_vpc_security_group" "out_all" {
     name = "out_all"
     network_id = yandex_vpc_network.web-network.id
     egress {
         protocol = "ANY"
         v4_cidr_blocks = ["0.0.0.0/0"]
-        from_port = 0
-        to_port = 65535
-    }
-}
-
-resource "yandex_vpc_security_group" "in_all" {
-    name = "in_all"
-    network_id = yandex_vpc_network.web-network.id
-    ingress {
-        protocol = "ANY"
-        v4_cidr_blocks = ["10.0.0.0/8"]
-    }
-}
-
-resource "yandex_vpc_security_group" "local_all" {
-    name = "local_all"
-    network_id = yandex_vpc_network.web-network.id
-    ingress {
-        protocol = "ANY"
-        v4_cidr_blocks = ["192.168.0.0/16"]
-        from_port = 0
-        to_port = 65535
-    }
-    egress {
-        protocol = "ANY"
-        v4_cidr_blocks = ["192.168.0.0/16"]
-        from_port = 0
-        to_port = 65535
     }
 }

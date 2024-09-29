@@ -23,7 +23,7 @@ resource "yandex_compute_instance" "zabbix" {
     index = 0
     subnet_id = yandex_vpc_subnet.web-sub-a.id
     nat = true
-    security_group_ids = [ yandex_vpc_security_group.out_all.id, yandex_vpc_security_group.inc_web.id, yandex_vpc_security_group.local_all.id, yandex_vpc_security_group.in_all.id ]
+    security_group_ids = [ yandex_vpc_security_group.out_all.id, yandex_vpc_security_group.inc_ssh.id, yandex_vpc_security_group.inc_http.id ]
     }
   
   metadata = {
