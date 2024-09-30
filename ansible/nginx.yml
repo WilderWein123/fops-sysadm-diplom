@@ -2,9 +2,9 @@
   remote_user: seregin
   become: yes
   tasks:
-    - name: zabbix remove unattended-upgrades
+    - name: install nginx
       command:
-        apt purge unattended-upgrades -y
+        apt install nginx -y
     - name: nginx waiting for nginx install by cloudinit
       shell:
         cmd: while [ -n $(dpkg -l nginx 2>/dev/null) ]; do sleep 10; done
@@ -51,3 +51,6 @@
         name: filebeat.service
         state: restarted
         enabled: true
+    - name: install zbx zabbix-agent
+      command:
+        apt install zabbix-agent

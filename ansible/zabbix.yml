@@ -2,9 +2,6 @@
   remote_user: seregin
   become: yes
   tasks:
-  - name: zabbix remove unattended-upgrades
-    command:
-      apt purge unattended-upgrades -y
   - name: zabbix wget zbx repo
     command:
       wget https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2+ubuntu22.04_all.deb
@@ -41,5 +38,8 @@
   - name: zabbix restart apache
     command:
       /etc/init.d/apache2 restart
+  - name: install zbx zabbix-agent
+    command:
+      apt install zabbix-agent
       
 
