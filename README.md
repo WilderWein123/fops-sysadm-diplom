@@ -136,6 +136,11 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 7. Третий (remote-exec) устанавливает zabbix-agent на вм. Устанавливает из штатного репозитория, так как у нас неиспользуются специфические настройки zabbix, нет смысла ставить свежие (из репозитория ставится 5 версия).
 8. Последний ставит аттрибут 600 на файл ключа (требование SSH) и запускает плейбуки /ansible/*.yml
 9. Файлы для деплоя лежат в хранилище дистрибутивов локального компьютера администратора /data/distribs/Linux/elasticsearch/
+10. Настройка zabbix-agent производилась в ручной режиме с бастион-ноды:
+```
+ssh -i id_rsa seregin@SRVIPADDRESS sed -i 's\Server=127.0.0.1\Server=192.168.253.27\g' /etc/zabbix/zabbix_agentd.conf
+ssh -i id_rsa seregin@SRVIPADDRESS /etc/init.d/zabbix-agent restart
+```
 
 **Технические особенности деплоя nginx (ansible)**
 
@@ -192,3 +197,10 @@ http://89.169.154.200:5601/app/dashboards#/view/046212a0-a2a1-11e7-928f-5dbe6f6f
 
 
 zabbix:
+http://89.169.142.204/zabbix/zabbix.php?action=dashboard.view&dashboardid=353&from=now-1h&to=now
+fops-superadmin-user
+n_y7UzDTz8
+
+(All dashboards -> fops-admin)
+
+В соотвествтии с заданиями сделал дашборд, графики, триггеры для недоступности вебов, если будут проблемы отобразятся на дашборде в столбце trigers и в виджете avsailability.
