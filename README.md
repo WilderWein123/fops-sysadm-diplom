@@ -96,4 +96,53 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 1. Вопросы вида «Ничего не работает. Не запускается. Всё сломалось». Дипломный руководитель не сможет ответить на такой вопрос без дополнительных уточнений. Цените своё время и время других.
 2. Откладывание выполнения дипломной работы на последний момент.
 
+**Схема сетевой инфраструктуры**
 
+<img src = "img/network.jpg" width = 100%>
+
+**Листинг файлов**
+
+| имя файла | комментарий |
+| /PROJECTDIR/id_rsa | приватный SSH-ключ (.gitignore) |
+| /PROJECTDIR/id_rsa.pub | публичный SSH-ключ (.gitignore) |
+| /PROJECTDIR/teraform/bastion.tf | teraform-файл сервера для подключения к инфраструктуре ("Бастион") |
+| /PROJECTDIR/teraform/elastic.tf | teraform-файл сервера Elasticsearch |
+| /PROJECTDIR/teraform/kibana.tf | teraform-файл сервера Kibana |
+| /PROJECTDIR/teraform/nginx.tf | teraform-файл серверов NGINX |
+| /PROJECTDIR/teraform/zabbix.tf | teraform-файл сервера Zabbix |
+| /PROJECTDIR/teraform/cloud_conf.yaml | файл с метаданными виртуальных машин YandexCloud |
+| /PROJECTDIR/teraform/main-datasources.tf | файл с пользовательскими параметрами (админ сервера, метонахождение файлов ключей) |
+| /PROJECTDIR/teraform/main-provider.tf | Файл с данными подключения к YadnexCloud (токен вводится вручную при запуске) |
+| /PROJECTDIR/teraform/main-resources.tf | Файл с неспецифичными ресурсами ЯО (сети, шлюзы, маршруты, балансировщики, шаблон hosts для ansible) |
+| /PROJECTDIR/teraform/main-secgroups.tf | файл с правилами брандмауэра (YandexCloud Security Groups) |
+
+**Технические особенности сервиса**
+
+
+
+**Используемые правила security group**
+
+| имя ресурса | тип IP адреса | Имя Правила  | Правило | Комментарий |
+| ------ | ------ | ------ | ------ | ------ | 
+| nginx1,2 | внутренний | out_all | tcp/ALL -> 0.0.0.0/0 | | 
+| nginx1,2 | внутренний | inc_http | 0.0.0.0/0 -> tcp/80 | сервер в локальной сети, поэтому нет смысла фильтровать адреса |
+| nginx1,2 | внутренний | inc_zbxagent | 192.168.0.0/16 -> tcp/10050 | |
+| nginx1,2 | внутренний | inc_ssh | 192.168.0.0/16 -> tcp/22 | |
+| kibana | внешний | out_all | tcp/ALL -> 0.0.0.0/0 | | 
+| kibana | внешний | inc_kibana | 0.0.0.0/0 -> tcp/5601 | |
+| kibana | внешний | inc_ssh | 192.168.0.0/16 -> tcp/22 | |
+| kibana | внешний | inc_zbxagent | 192.168.0.0/16 -> tcp/10050 | |
+| zabbix | внешний | out_all | tcp/ALL -> 0.0.0.0/0 | | 
+| zabbix | внешний | inc_ssh | 192.168.0.0/16 -> tcp/22 | |
+| zabbix | внешний | inc_http | 0.0.0.0/0 -> tcp/80 | |
+| bastion | внешний | out_all | tcp/ALL -> 0.0.0.0/0 | | 
+| bastion | внешний | inc_ssh_global | 0.0.0.0/0 -> tcp/22 | |
+| bastion | внешний | inc_zbxagent | 192.168.0.0/16 -> tcp/10050 | |
+| elastic | внутренний | out_all | tcp/ALL -> 0.0.0.0/0 | | 
+| elastic | внутренний | inc_zbxagent | 192.168.0.0/16 -> tcp/10050 | |
+| elastic | внутренний | inc_elk | 192.168.0.0/16 -> tcp/9200 | |
+| elastic | внутренний | inc_ssh | 192.168.0.0/16 -> tcp/22 | |
+
+**Результат выполнения teraform+ansible**
+
+<img src = "img/img1.jpg" width = 100%>
