@@ -5,7 +5,7 @@ resource "yandex_compute_instance" "zabbix" {
   resources {
     cores  = 2
     memory = 2
-    core_fraction = 20
+    core_fraction = 5
   }
 
   boot_disk {

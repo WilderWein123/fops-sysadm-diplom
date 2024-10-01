@@ -5,7 +5,7 @@ resource "yandex_compute_instance" "bastion" {
   resources {
     cores  = 2
     memory = 1
-    core_fraction = 20
+    core_fraction = 5
   }
 
   boot_disk {
@@ -49,6 +49,11 @@ resource "null_resource" "ansible" {
   provisioner "file"{
     source = "/data/distribs/Linux/elasticsearch/"
     destination = "/tmp"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt install ansible zabbix-agent -y",
+      ]
   }
   provisioner "remote-exec" {
     inline = [
