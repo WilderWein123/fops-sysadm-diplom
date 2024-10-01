@@ -103,6 +103,7 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 **Листинг файлов**
 
 | имя файла | комментарий |
+| ------ | ------ |
 | /PROJECTDIR/id_rsa | приватный SSH-ключ (.gitignore) |
 | /PROJECTDIR/id_rsa.pub | публичный SSH-ключ (.gitignore) |
 | /PROJECTDIR/teraform/bastion.tf | teraform-файл сервера для подключения к инфраструктуре ("Бастион") |
