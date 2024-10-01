@@ -116,6 +116,14 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 | /PROJECTDIR/teraform/main-provider.tf | Файл с данными подключения к YadnexCloud (токен вводится вручную при запуске) |
 | /PROJECTDIR/teraform/main-resources.tf | Файл с неспецифичными ресурсами ЯО (сети, шлюзы, маршруты, балансировщики, шаблон hosts для ansible) |
 | /PROJECTDIR/teraform/main-secgroups.tf | файл с правилами брандмауэра (YandexCloud Security Groups) |
+| /PROJECTDIR/ansible/etc/* | конфигурационные файлы Nginx |
+| /PROJECTDIR/ansible/elastic.yml | ansible скрипт установки elasticsearch (без настройки) |
+| /PROJECTDIR/ansible/kibana.yml | ansible скрипт установки elasticsearch (без настройки) |
+| /PROJECTDIR/ansible/kibana.yml | ansible скрипт установки elasticsearch (без настройки) |
+| /PROJECTDIR/ansible/zabbix.yml | ansible скрипт установки zabbix (без настройки) |
+| /PROJECTDIR/ansible/zabbix.sh | bash скрипт настройки zabbix |
+| /PROJECTDIR/ansible/hosts.tpl | шаблон hosts-файла для ansible |
+| /PROJECTDIR/ansible/hosts (динамический) | hosts-файл для ansible |
 
 **Технические особенности деплоя**
 
@@ -123,8 +131,8 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 2. Минимальная конфигурация каждой сети - Nat Gateway, Route Table.
 3. После выполнения деплоя teraform по шаблону ansible/hosts.tpl собирается файл hosts для дальнейшего использования teraform
 4. После выполнения деплоя ВМ bastion вызывается набор провижнеров: 
-5. Первый (file) заливает в /tmp файлы ansible и ssh-ключ для работы с 
-6. Второй (file) заливает в /tmp файлы дистрибутивов ELK-стека
+5. Первый (file) загружает в /tmp файлы ansible и ssh-ключ для работы с 
+6. Второй (file) загружает в /tmp файлы дистрибутивов ELK-стека
 7. Третий (remote-exec) устанавливает zabbix-agent на вм.
 8. Последний ставит аттрибут 600 на файл ключа (требование SSH) и запускает плейбуки /ansible/*.yml
 9. Файлы для деплоя лежат в хранилище дистрибутивов локального компьютера администратора /data/distribs/Linux/elasticsearch/
@@ -133,7 +141,7 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 
 1. Вебсервер устанавливается из стандартного репозитория;
 2. Из директории ansible рекурсивно копируются директории /etc , /var , заменяющие стандартные страницы и файлы конфигураций;
-3. Из закаченного ранее набора дистрибутивов ELK-стека устанавливается filebeat и включается модуль NGINX.
+3. Из закаченного ранее набора дистрибутивов ELK-стека загружается filebeat. Автоматизировать проблематично, тк процесс не двигается без установленного заранее kibana. Дальнейшую настройку производим вручную.
 
 **Технические особенности деплоя zabbix (ansible)**
 
@@ -173,3 +181,7 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 **Результат выполнения teraform+ansible**
 
 <img src = "img/img1.jpg" width = 100%>
+
+Работа балансировщика:
+http://51.250.42.49/
+

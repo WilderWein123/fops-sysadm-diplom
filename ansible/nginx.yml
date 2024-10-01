@@ -2,6 +2,9 @@
   remote_user: seregin
   become: yes
   tasks:
+    - name: update repos
+      command:
+        apt update
     - name: install nginx
       command:
         apt install nginx -y
@@ -40,17 +43,6 @@
             access:
               enabled: true
         mode: 777
-    - name: nginx installing nginx module
-      shell:
-        cmd:  filebeat setup --dashboards && filebeat modules enable system nginx
-    - name: nginx refreshing daemon info
-      shell:
-        cmd: systemctl daemon-reload
-    - name: nginx restart and enbale filebeat daemon
-      systemd:
-        name: filebeat.service
-        state: restarted
-        enabled: true
     - name: install zbx zabbix-agent
       command:
         apt install zabbix-agent
