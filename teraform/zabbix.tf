@@ -16,7 +16,7 @@ resource "yandex_compute_instance" "zabbix" {
   }
 
   scheduling_policy {
-    preemptible = true
+#    preemptible = true
   }
 
   network_interface {

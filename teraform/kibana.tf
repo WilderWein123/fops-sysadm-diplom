@@ -16,7 +16,7 @@ resource "yandex_compute_instance" "kibana" {
   }
 
   scheduling_policy {
-    preemptible = true
+#    preemptible = true
   }
 
     network_interface {

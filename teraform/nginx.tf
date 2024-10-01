@@ -17,7 +17,7 @@ resource "yandex_compute_instance" "nginx" {
   }
 
   scheduling_policy {
-    preemptible = true
+#    preemptible = true
   }
 
   network_interface {

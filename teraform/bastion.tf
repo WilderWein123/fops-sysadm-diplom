@@ -16,7 +16,7 @@ resource "yandex_compute_instance" "bastion" {
   }
 
   scheduling_policy {
-    preemptible = true
+#    preemptible = true
   }
 
     network_interface {
